@@ -1,0 +1,30 @@
+kind: pipeline
+name: default
+type: docker
+
+steps:
+- name: sync-build-deploy
+  image: drillster/drone-rsync
+  settings:
+    hosts: [ "angelnew-hlg.angeloni.com.br" ]
+    user: root
+    key:
+      from_secret: DRONE-ANGELNEW-HLG_PRIV
+    source: ./
+    target: /u/docker/integration-apps/wh-cpaniversario
+    exclude: [ "logs", ".git" ]
+    delete: true
+    script:
+      - export PROJECT=wh-cpaniversario
+      - cd /u/docker/integration-apps/
+      - chmod -R 770 $PROJECT
+      - chmod 775 $PROJECT
+      - mkdir -p $PROJECT/logs
+      - chmod -R 775 $PROJECT/logs
+      - cd $PROJECT
+      - unset PROJECT
+      - docker-compose up -d --build
+    when:
+      branch:
+        - main
+        

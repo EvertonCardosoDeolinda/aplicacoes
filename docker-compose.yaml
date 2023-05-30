@@ -1,0 +1,24 @@
+version: "2.4"
+services:
+  cpaniversario:
+    build: ${SERVICE1}
+    restart: unless-stopped
+    ports:
+      - ${SERVICE1_PORT}:${SERVICE1_PORT}
+    environment:
+      - JAR_PROFILE=${SERVICE1_PROFILE}
+      - JAVA_MAX_MEM=${SERVICE1_MEM}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./logs:/logs:rw
+    #healthcheck:
+     # test: curl --fail http://localhost:${SERVICE1_PORT}${SERVICE1_HEALTH_URI} || pkill sleep || exit 1
+     # interval: 4m
+     # timeout: 10s
+     # retries: 35
+     # start_period: 4m
+    command:
+      - /scripts/start_java.sh
+      
+      
